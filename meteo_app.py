@@ -1,4 +1,3 @@
-
 import streamlit as st
 import requests
 
@@ -45,6 +44,13 @@ st.markdown(
     <style>
         .stApp {
             background-image: linear-gradient(to bottom, #f0f8ff, #ffffff);
+            color: #222222;
+        }
+        h1, h2, h3, .markdown-text-container {
+            color: #1a1a1a !important;
+        }
+        .st-expanderHeader {
+            color: #333 !important;
         }
     </style>
     """,
@@ -57,7 +63,7 @@ st.markdown("<h1 style='color:#1f77b4;'>🌦️ Météo & Conseil Habits</h1>", 
 ville = st.text_input("🏙️ Entre une ville :", "Strasbourg")
 
 # --- Appel API météo ---
-API_KEY = "97e41cf22ddd4ba1950164407250407"  # ← Remplace ici par ta clé WeatherAPI
+API_KEY = "97e41cf22ddd4ba1950164407250407"  # Remplace ici par ta clé WeatherAPI
 URL = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ville}&lang=fr&days=7"
 
 response = requests.get(URL)
@@ -86,9 +92,9 @@ if response.status_code == 200:
     for r in remarques:
         st.info(r)
 
-    # --- Prévisions pour les 6 prochains jours ---
+    # --- Prévisions pour les 6 prochains jours (on saute le jour actuel) ---
     st.markdown("## 📅 Prévisions à venir")
-    for day in forecast_days[1:]:  # On saute aujourd'hui
+    for day in forecast_days[1:]:
         date = day["date"]
         day_temp = day["day"]["maxtemp_c"]
         day_condition = day["day"]["condition"]["text"]
@@ -100,3 +106,4 @@ if response.status_code == 200:
             st.write(f"🌡️ Température max : **{day_temp}°C**")
 else:
     st.error("❌ Ville introuvable ou erreur d'API.")
+
