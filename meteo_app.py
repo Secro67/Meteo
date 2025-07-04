@@ -62,7 +62,7 @@ st.markdown("<h1 style='color:#1f77b4;'>🌦️ Météo & Conseil Habits</h1>", 
 ville = st.text_input("🏙️ Entre une ville :", "Strasbourg")
 
 # --- API WEATHER ---
-API_KEY = "TA_CLE_API"  # ← remplace par ta clé
+API_KEY = "97e41cf22ddd4ba1950164407250407"  # ← remplace par ta clé
 URL = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ville}&lang=fr&days=3"
 
 response = requests.get(URL)
