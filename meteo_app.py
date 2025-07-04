@@ -63,7 +63,7 @@ st.markdown("<h1 style='color:#1f77b4;'>🌦️ Météo & Conseil Habits</h1>", 
 ville = st.text_input("🏙️ Entre une ville :", "Strasbourg")
 
 # --- Appel API météo ---
-API_KEY = "97e41cf22ddd4ba1950164407250407"  # Remplace ici par ta clé WeatherAPI
+API_KEY = "TA_CLE_API"  # 🔁 Remplace par ta clé API perso
 URL = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ville}&lang=fr&days=7"
 
 response = requests.get(URL)
@@ -90,9 +90,13 @@ if response.status_code == 200:
     st.write(haut)
     st.write(bas)
     for r in remarques:
-        st.info(r)
+        st.markdown(f"""
+        <div style='background-color: #d0e8ff; padding: 10px; border-radius: 10px; margin: 5px 0; color: #222222;'>
+            {r}
+        </div>
+        """, unsafe_allow_html=True)
 
-    # --- Prévisions pour les 6 prochains jours (on saute le jour actuel) ---
+    # --- Prévisions pour les 6 jours suivants (on saute le jour actuel) ---
     st.markdown("## 📅 Prévisions à venir")
     for day in forecast_days[1:]:
         date = day["date"]
@@ -106,4 +110,3 @@ if response.status_code == 200:
             st.write(f"🌡️ Température max : **{day_temp}°C**")
 else:
     st.error("❌ Ville introuvable ou erreur d'API.")
-
