@@ -2,7 +2,7 @@
 import streamlit as st
 import requests
 
-# --- FONCTION CONSEIL VESTIMENTAIRE ---
+# --- Fonction de conseil vestimentaire ---
 def conseil_vetements_detaille(temp, condition):
     condition = condition.lower()
 
@@ -37,16 +37,12 @@ def conseil_vetements_detaille(temp, condition):
 
     return haut, bas, remarques
 
-# --- PAGE CONFIG ---
+# --- Apparence Streamlit ---
 st.set_page_config(page_title="Météo & Vêtements", page_icon="🌦️")
 
-# --- CSS PERSONNALISÉ POUR LE FOND ---
 st.markdown(
     """
     <style>
-        body {
-            background-color: #f0f8ff;
-        }
         .stApp {
             background-image: linear-gradient(to bottom, #f0f8ff, #ffffff);
         }
@@ -55,55 +51,52 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- TITRE ---
 st.markdown("<h1 style='color:#1f77b4;'>🌦️ Météo & Conseil Habits</h1>", unsafe_allow_html=True)
 
-# --- ENTRÉE UTILISATEUR : VILLE ---
+# --- Entrée utilisateur : ville ---
 ville = st.text_input("🏙️ Entre une ville :", "Strasbourg")
 
-# --- API WEATHER ---
-API_KEY = "97e41cf22ddd4ba1950164407250407"  # ← remplace par ta clé
-URL = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ville}&lang=fr&days=3"
+# --- Appel API météo ---
+API_KEY = "97e41cf22ddd4ba1950164407250407"  # ← Remplace ici par ta clé WeatherAPI
+URL = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={ville}&lang=fr&days=7"
 
 response = requests.get(URL)
 
 if response.status_code == 200:
     data = response.json()
-
-    # Données du jour
     current = data["current"]
     forecast_days = data["forecast"]["forecastday"]
 
+    # --- Météo actuelle ---
     temp = current["temp_c"]
     condition = current["condition"]["text"]
     icon_url = "https:" + current["condition"]["icon"]
 
     haut, bas, remarques = conseil_vetements_detaille(temp, condition)
 
-    # Affichage météo actuelle
     st.markdown("## ☁️ Météo actuelle")
     col1, col2 = st.columns([1, 4])
     col1.image(icon_url, width=80)
     col2.write(f"🌡️ **{temp}°C** — {condition}")
 
+    # --- Conseils vestimentaires ---
     st.markdown("## 👕 Conseil vestimentaire")
     st.write(haut)
     st.write(bas)
     for r in remarques:
         st.info(r)
 
-    # Prévisions des prochains jours
-    st.markdown("## 📅 Prévisions 3 jours")
-    for day in forecast_days:
+    # --- Prévisions pour les 6 prochains jours ---
+    st.markdown("## 📅 Prévisions à venir")
+    for day in forecast_days[1:]:  # On saute aujourd'hui
         date = day["date"]
-        day_temp = day["day"]["avgtemp_c"]
+        day_temp = day["day"]["maxtemp_c"]
         day_condition = day["day"]["condition"]["text"]
         icon_day = "https:" + day["day"]["condition"]["icon"]
 
         with st.expander(f"📆 {date}"):
             st.image(icon_day, width=50)
             st.write(f"🌤️ Condition : **{day_condition}**")
-            st.write(f"🌡️ Température moyenne : **{day_temp}°C**")
-
+            st.write(f"🌡️ Température max : **{day_temp}°C**")
 else:
     st.error("❌ Ville introuvable ou erreur d'API.")
